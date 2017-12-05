@@ -2,6 +2,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.callbacks import EarlyStopping
 from keras.utils import np_utils
+from keras.optimizers import SGD
 
 import csv
 import numpy as np
@@ -19,7 +20,7 @@ def normalize(data):
         data[name] = (data[name]-np.min(data[name]))/(np.max(data[name])-np.min(data[name]))
     return data
 
-data = pd.read_csv('data/trainCompleteV2.csv')
+data = pd.read_csv('data/trainComplete.csv')
 X = data.ix[:, 'tempo':]
 y = data['genre']
 
@@ -28,24 +29,34 @@ y_categorical = np_utils.to_categorical(y)
 
 # Creating a Neural Networks Model
 model = Sequential()
-model.add(Dense(28, input_shape=(X.shape[1],), activation='relu'))
-#model.add(Dense(1000, activation='relu'))
-#model.add(Dropout(0.25))
-#model.add(Dense(2500, activation='relu'))
-#model.add(Dropout(0.5))
-model.add(Dense(3997, activation='relu'))
+model.add(Dense(20, input_shape=(X.shape[1],), activation='relu'))
+model.add(Dense(128, activation='relu'))
+model.add(Dropout(0.25))
+model.add(Dense(256, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(512, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(350, activation='relu'))
 model.add(Dense(9, activation='softmax'))
 
 # Compiling Neural Networks Model
+#sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 model.compile(loss='categorical_crossentropy', optimizer="adam", metrics=["acc"])
 
 X_trainMatrix = np.array(X)
-results = model.fit(X_trainMatrix, y_categorical, epochs=20, batch_size=1)
+results = model.fit(X_trainMatrix, y_categorical, validation_split=0.3, epochs=1000, batch_size=32)
 
-scores = model.evaluate(X_trainMatrix, y_categorical)
+data2 = pd.read_csv('data/trainPartTest.csv')
+x_test = data2.ix[:, 'tempo':]
+y_test = data2['genre']
+
+x_test = normalize(x_test)
+y_categorical_test = np_utils.to_categorical(y_test)
+X_trainMatrix_test = np.array(x_test)
+scores = model.evaluate(X_trainMatrix_test, y_categorical_test)
 print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
 
-test_data = pd.read_csv('data/testCompleteV2.csv')
+test_data = pd.read_csv('data/testComplete.csv')
 X_test = test_data.ix[:,'tempo':]
 
 X_test = normalize(X_test)
