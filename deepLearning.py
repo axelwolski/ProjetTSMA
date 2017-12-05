@@ -29,14 +29,12 @@ y_categorical = np_utils.to_categorical(y)
 
 # Creating a Neural Networks Model
 model = Sequential()
-model.add(Dense(20, input_shape=(X.shape[1],), activation='relu'))
-model.add(Dense(128, activation='relu'))
-model.add(Dropout(0.25))
-model.add(Dense(256, activation='relu'))
+model.add(Dense(29,input_shape=(X.shape[1],), activation='softmax'))
 model.add(Dropout(0.2))
-model.add(Dense(512, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(350, activation='relu'))
+model.add(Dense(280, activation='softmax'))
+model.add(Dropout(0.2))
+model.add(Dense(350, activation='softmax'))
+model.add(Dropout(0.2))
 model.add(Dense(9, activation='softmax'))
 
 # Compiling Neural Networks Model
