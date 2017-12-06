@@ -13,7 +13,7 @@ from os.path import isfile, join
 def completeTrain(name_csv, path):
 
     file1 = open(name_csv, "r")
-    trainFinal = open('data/trainCompleteV2.csv', "wb")
+    trainFinal = open('data/trainComplete.csv', "wb")
     writer = csv.writer(trainFinal)
     writer.writerow(('songname', 'genre', 'tempo', 'beats', 'chromagram_stft', 'chromagram_cqt',
     'rmse', 'spectral_cent', 'spectral_bw', 'spectral_rolloff', 'zero_crossing', 'mfcc1', 'mfcc2',
@@ -56,6 +56,7 @@ def completeTrain(name_csv, path):
         name = row[0]
         genre = row[1]
         if (songname == name):
+            genre = genre - 1
             songgenre = genre
 
         beatsWR = numpy.sum(beats)

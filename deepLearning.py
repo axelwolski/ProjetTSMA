@@ -20,7 +20,7 @@ def normalize(data):
         data[name] = (data[name]-np.min(data[name]))/(np.max(data[name])-np.min(data[name]))
     return data
 
-data = pd.read_csv('data/trainComplete.csv')
+data = pd.read_csv('data/trainPartTrain.csv')
 X = data.ix[:, 'tempo':]
 y = data['genre']
 
@@ -30,19 +30,19 @@ y_categorical = np_utils.to_categorical(y)
 # Creating a Neural Networks Model
 model = Sequential()
 model.add(Dense(29,input_shape=(X.shape[1],), activation='softmax'))
-model.add(Dropout(0.2))
-model.add(Dense(280, activation='softmax'))
-model.add(Dropout(0.2))
-model.add(Dense(350, activation='softmax'))
-model.add(Dropout(0.2))
-model.add(Dense(9, activation='softmax'))
+model.add(Dense(128, activation='softmax'))
+model.add(Dropout(0.25))
+model.add(Dense(256, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(512, activation='relu'))
+model.add(Dense(8, activation='softmax'))
 
 # Compiling Neural Networks Model
 #sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 model.compile(loss='categorical_crossentropy', optimizer="adam", metrics=["acc"])
 
 X_trainMatrix = np.array(X)
-results = model.fit(X_trainMatrix, y_categorical, validation_split=0.3, epochs=1000, batch_size=32)
+results = model.fit(X_trainMatrix, y_categorical, epochs=10000, batch_size=128)
 
 data2 = pd.read_csv('data/trainPartTest.csv')
 x_test = data2.ix[:, 'tempo':]
@@ -80,6 +80,8 @@ writer.writerow(('track_id','genre_id'))
 for row in test_pred:
     n = trackId.next()
     track_id = n[0]
+    genre_pred = row
+    genre_pred = genre_pred+1
     if (track_id == '098559'):
         writer.writerow((track_id,'4'))
         n = trackId.next()
@@ -88,7 +90,7 @@ for row in test_pred:
         writer.writerow((track_id,'2'))
         n = trackId.next()
         track_id = n[0]
-    writer.writerow((track_id,row))
+    writer.writerow((track_id,genre_pred))
 
 dataTrackId.close()
 result.close()

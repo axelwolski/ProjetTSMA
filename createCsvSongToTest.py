@@ -12,7 +12,7 @@ from os.path import isfile, join
 
 def createTestCsv(path):
 
-    testFinal = open('data/testCompleteV2.csv', "wb")
+    testFinal = open('data/testComplete.csv', "wb")
     writer = csv.writer(testFinal)
     writer.writerow(('songname', 'tempo', 'beats', 'chromagram_stft', 'chromagram_cqt',
     'rmse', 'spectral_cent', 'spectral_bw', 'spectral_rolloff', 'zero_crossing', 'mfcc1', 'mfcc2',
